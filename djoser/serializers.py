@@ -38,6 +38,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         if referrer and User.objects.filter(email=referrer).count() == 1:
             user.referrer = User.objects.get(email=referrer)
+            user.credits += 10
             user.save()
 
         return user
@@ -65,6 +66,7 @@ class UserRegistrationTokenSerializer(serializers.ModelSerializer):
 
         if referrer and User.objects.filter(email=referrer).count() == 1:
             user.referrer = User.objects.get(email=referrer)
+            user.credits += 10
             user.save()
 
         Token.objects.get_or_create(user=user)
