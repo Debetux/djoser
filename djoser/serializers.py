@@ -41,6 +41,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             user.credits += 10
             user.save()
 
+            user.referrer.credits += 10
+            user.referrer.save()
+
         return user
 
 
@@ -68,6 +71,9 @@ class UserRegistrationTokenSerializer(serializers.ModelSerializer):
             user.referrer = User.objects.get(email=referrer)
             user.credits += 10
             user.save()
+
+            user.referrer.credits += 10
+            user.referrer.save()
 
         Token.objects.get_or_create(user=user)
         return user
