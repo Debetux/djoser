@@ -109,5 +109,5 @@ class SendEmailViewMixin(object):
             'site_name': site_name,
             'uid': uid,
             'token': token,
-            'protocol': 'https' if self.request.is_secure() else 'http',
+            'protocol': 'https',
         }
