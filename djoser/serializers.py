@@ -43,6 +43,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
             user.referrer.credits += 10
             user.referrer.save()
+        elif referrer in ['sagarmathalbv']:
+            user.credits += 10
+            user.save()
 
         return user
 
