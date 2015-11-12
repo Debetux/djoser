@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    referrer = serializers.CharField(required=False)
+    referral = serializers.CharField(required=False)
 
     class Meta:
         model = User
@@ -33,7 +33,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        referrer = validated_data.pop('referrer', None)
+        referrer = validated_data.pop('referral', None)
         user = User.objects.create_user(**validated_data)
 
         if referrer and User.objects.filter(email=referrer).count() == 1:
@@ -53,7 +53,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserRegistrationTokenSerializer(serializers.ModelSerializer):
     password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     token = serializers.CharField(source="auth_token.key", read_only=True)
-    referrer = serializers.CharField(required=False)
+    referral = serializers.CharField(required=False)
 
     class Meta:
         model = User
@@ -66,7 +66,7 @@ class UserRegistrationTokenSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        referrer = validated_data.pop('referrer', None)
+        referrer = validated_data.pop('referral', None)
 
         user = User.objects.create_user(**validated_data)
 
