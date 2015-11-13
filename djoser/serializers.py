@@ -29,7 +29,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             User.USERNAME_FIELD,
             User._meta.pk.name,
             'password',
-            'referrer'
+            'referral'
         )
 
     def create(self, validated_data):
@@ -62,7 +62,7 @@ class UserRegistrationTokenSerializer(serializers.ModelSerializer):
             User._meta.pk.name,
             'password',
             'token',
-            'referrer'
+            'referral'
         )
 
     def create(self, validated_data):
