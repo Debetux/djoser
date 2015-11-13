@@ -180,7 +180,14 @@ class PasswordResetConfirmView(utils.ActionViewMixin, generics.GenericAPIView):
     def action(self, serializer):
         serializer.user.set_password(serializer.data['new_password'])
         serializer.user.save()
-        return response.Response(status=status.HTTP_200_OK)
+
+        user = serializer.user
+        token, _ = Token.objects.get_or_create(user=user)
+        user_logged_in.send(sender=user.__class__, request=self.request, user=user)
+        return Response(
+            data=serializers.TokenSerializer(token).data,
+            status=status.HTTP_200_OK,
+        )
 
 
 class ActivationView(utils.ActionViewMixin, generics.GenericAPIView):
