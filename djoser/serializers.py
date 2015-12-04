@@ -12,10 +12,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
             User._meta.pk.name,
-            User.USERNAME_FIELD,
+            'email',
         )
         read_only_fields = (
-            User.USERNAME_FIELD,
+            'email',
         )
 
 
@@ -26,7 +26,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
-            User.USERNAME_FIELD,
+            'email',
             User._meta.pk.name,
             'password',
             'referral'
@@ -58,7 +58,7 @@ class UserRegistrationTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = tuple(User.REQUIRED_FIELDS) + (
-            User.USERNAME_FIELD,
+            'email',
             User._meta.pk.name,
             'password',
             'token',
@@ -96,10 +96,10 @@ class LoginSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super(LoginSerializer, self).__init__(*args, **kwargs)
         self.user = None
-        self.fields[User.USERNAME_FIELD] = serializers.CharField(required=False)
+        self.fields['email'] = serializers.CharField(required=False)
 
     def validate(self, attrs):
-        self.user = authenticate(username=attrs.get(User.USERNAME_FIELD), password=attrs.get('password'))
+        self.user = authenticate(username=attrs.get('email'), password=attrs.get('password'))
         if self.user:
             if not self.user.is_active:
                 raise serializers.ValidationError(self.error_messages['inactive_account'])
@@ -187,30 +187,30 @@ class SetUsernameSerializer(serializers.ModelSerializer, CurrentPasswordSerializ
     class Meta(object):
         model = User
         fields = (
-            User.USERNAME_FIELD,
+            'email',
             'current_password',
         )
 
     def __init__(self, *args, **kwargs):
         super(SetUsernameSerializer, self).__init__(*args, **kwargs)
-        self.fields['new_' + User.USERNAME_FIELD] = self.fields[User.USERNAME_FIELD]
-        del self.fields[User.USERNAME_FIELD]
+        self.fields['new_' + 'email'] = self.fields['email']
+        del self.fields['email']
 
 
 class SetUsernameRetypeSerializer(SetUsernameSerializer):
     default_error_messages = {
-        'username_mismatch': constants.USERNAME_MISMATCH_ERROR.format(User.USERNAME_FIELD),
+        'username_mismatch': constants.USERNAME_MISMATCH_ERROR.format('email'),
     }
 
     def __init__(self, *args, **kwargs):
         super(SetUsernameRetypeSerializer, self).__init__(*args, **kwargs)
-        self.fields['re_new_' + User.USERNAME_FIELD] = serializers.CharField()
+        self.fields['re_new_' + 'email'] = serializers.CharField()
 
     def validate(self, attrs):
         attrs = super(SetUsernameRetypeSerializer, self).validate(attrs)
-        new_username = attrs[User.USERNAME_FIELD]
-        if new_username != attrs['re_new_' + User.USERNAME_FIELD]:
-            raise serializers.ValidationError(self.error_messages['username_mismatch'].format(User.USERNAME_FIELD))
+        new_username = attrs['email']
+        if new_username != attrs['re_new_' + 'email']:
+            raise serializers.ValidationError(self.error_messages['username_mismatch'].format('email'))
         return attrs
 
 
